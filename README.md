@@ -21,6 +21,11 @@ DevToolbox ist ein **Portfolio-Showcase-Projekt**, das meine Fähigkeiten in der
 <!-- START_RECENTLY_WORKED_ON -->
 | Feature | Commit Date | Commit |
 |---------|-------------|--------|
+| feat: implement YouTube Player with playlist and video management, add interop for sortable lists and playback controls | 2026-02-04 17:52:33 CET | [d31b79d](https://github.com/goldbarth/DevToolbox/commit/d31b79df00b28e1a6e04b567ce96384eeba90a09) |
+| feat: add drawers for creating playlists and adding videos with responsive UI structures | 2026-02-04 17:52:14 CET | [5767720](https://github.com/goldbarth/DevToolbox/commit/5767720f8ee5db6889d5c726484a45b21523427a) |
+| feat: integrate MudBlazor, update layout with collapsible sidebar, add database connection, and enhance YouTube Player features | 2026-02-04 17:51:56 CET | [4ba20ed](https://github.com/goldbarth/DevToolbox/commit/4ba20ed2b165271208f0f22e5d3d400a6fd014e3) |
+| feat: add JavaScript interop for sortable lists and YouTube player integration | 2026-02-04 17:51:20 CET | [3c95427](https://github.com/goldbarth/DevToolbox/commit/3c954275039badc001a1bedea830d2deeac4f137) |
+| feat: implement PlaylistService with CRUD operations and video management | 2026-02-04 17:50:34 CET | [684294f](https://github.com/goldbarth/DevToolbox/commit/684294fd898a508d152eb530c431c6c1c9ad314b) |
 <!-- END_RECENTLY_WORKED_ON -->
 
 ---
