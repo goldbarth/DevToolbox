@@ -191,9 +191,9 @@ Dieses Projekt ist unter der MIT-Lizenz lizenziert.
 ---
 ## 👤 Kontakt
 ### 📧 Kontakt
-- Email: [your-email@example.com](mailto:your-email@example.com)
-- GitHub: [https://github.com/your-username](https://github.com/your-username)
-- Portfolio: [https://your-portfolio.com](https://your-portfolio.com)
+- [![Portfolio](https://img.shields.io/badge/GitHub%20Pages-121013?logo=github&logoColor=white)](https://goldbarth.github.io/Portfolio/#/)
+- [![LinkedIn](https://custom-icon-badges.demolab.com/badge/LinkedIn-0A66C2?logo=linkedin-white&logoColor=fff)](https://www.linkedin.com/in/felix-wahl-6763791b9/)
+- [<kbd>E-Mail</kbd>](mailto:felix.wahl@live.de)
 ---
 
 *Entwickelt mit ❤️ und .NET*
