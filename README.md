@@ -1,7 +1,7 @@
 
 # 🧰 DevToolbox
 
-> Ein modernes Fullstack Blazor Portfolio-Projekt, das verschiedene nützliche Web-Tools vereint und moderne .NET-Entwicklungstechniken demonstriert.
+> Ein Blazor-Server Portfolio- und Lernprojekt mit Fokus auf **saubere Architektur**, **store-getriebenes State-Management** und **kontrollierte JavaScript-Interop** – demonstriert an realistischen Features (z. B. YouTube Playlist Manager).
 
 ![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=flat-square&logo=dotnet)
 ![Blazor](https://img.shields.io/badge/Blazor-Server-512BD4?style=flat-square&logo=blazor)
@@ -12,9 +12,15 @@
 
 ## 📋 Über das Projekt
 
-DevToolbox ist ein **Portfolio-Showcase-Projekt**, das meine Fähigkeiten in der modernen .NET-Webentwicklung demonstriert. Es handelt sich um eine Blazor Server-Anwendung, die eine Sammlung nützlicher Tools bereitstellt und dabei Best Practices für Architektur, Clean Code und UI/UX-Design anwendet.
+DevToolbox ist ein **Portfolio-Showcase-Projekt**. Der Schwerpunkt liegt nicht darauf, möglichst viele Tools zu sammeln, sondern darauf, **komplexere UI-Features strukturiert, testbar und erweiterbar** umzusetzen – inklusive Persistenz, asynchroner Datenflüsse und JS-Interop.
 
-**Ziel:** Vertiefung meiner Kenntnisse in Blazor, Entity Framework Core und modernem C#-Development, während ich gleichzeitig praktisch nutzbare Tools entwickle.
+**Ziel:** Vertiefung meiner Kenntnisse in Blazor Server, EF Core, modernem C# und Architektur-Entscheidungen rund um State-Management.
+
+👉 **Architecture documentation**
+
+- 🇬🇧 [Architecture (English)](DevToolbox/docs/en/ARCHITECTURE_EN.md)
+- 🇩🇪 [Architektur (Deutsch)](DevToolbox/docs/de/ARCHITECTURE_DE.md)
+
 
 ## 🔄 Recently Worked On
 
@@ -32,15 +38,18 @@ DevToolbox ist ein **Portfolio-Showcase-Projekt**, das meine Fähigkeiten in der
 
 ## ✨ Features
 
-### 🎵 YouTube Playlist Manager
+### 🎵 YouTube Playlist Manager (Architektur-Demonstrator)
+
+Dieses Feature dient bewusst als **Komplexitätstreiber** für die Architektur. Es kombiniert UI-State, Persistenz, asynchrone Workflows und externe JS-APIs.
+
 - **Playlist-Verwaltung**: Erstellen und organisieren eigener YouTube-Playlists
-- **Integrierter Player**: Abspielen von Videos direkt in der Anwendung
-- **Drag & Drop**: Intuitive Neuordnung von Videos per Drag-and-Drop
-- **Persistenz**: Alle Daten werden lokal in einer SQLite-Datenbank gespeichert
-- **Automatische Metadaten**: Titel, Thumbnails und Videodauer werden automatisch abgerufen
+- **Integrierter Player**: YouTube IFrame API via kontrollierter JS-Interop
+- **Drag & Drop**: SortableJS + bewusstes Lifecycle-Handling in Blazor
+- **Persistenz**: Lokale Speicherung in SQLite (EF Core)
+- **Explizites State-Management**: Store-getriebener Datenfluss über Actions / Reducer / Effects
 
 ### 🔜 Weitere geplante Tools
-*Dieses Projekt wächst organisch - neue Tools werden nach Bedarf hinzugefügt und in der README ergänzt. Eine dynamische Roadmap wird in Zukunft hinzugefügt.*
+*Das Projekt wächst organisch. Neue Features entstehen nur, wenn sie architektonisch interessant sind und etwas „echte“ Komplexität mitbringen.*
 
 ## 🛠️ Tech Stack
 
@@ -55,75 +64,33 @@ DevToolbox ist ein **Portfolio-Showcase-Projekt**, das meine Fähigkeiten in der
 | **ASP.NET Core MVC** | - | Routing & Navigation |
 
 ### Architektur-Highlights
-- **Feature-basierte Organisation**: Jedes Tool ist als eigenständiges Feature strukturiert
-- **Service Layer Pattern**: Saubere Trennung von Business Logic und UI
-- **Entity Mapping**: Explizite Konfiguration der Datenbankbeziehungen
-- **Dependency Injection**: Verwendung des integrierten DI-Containers
-- **Interactive Server Components**: Echtzeit-Updates ohne vollständige Seitenneulast
+- **Feature-basierte Organisation**: Jedes Tool als eigenständiges Feature
+- **Store-getriebenes State-Management**: Zentraler Store als Single Source of Truth
+- **Unidirektionaler Datenfluss**: Zustandsänderungen ausschließlich über explizite Actions
+- **Side-Effect Isolation**: DB-Zugriffe und JS-Interop in Effects gekapselt
+- **Controlled JS Interop**: YouTube IFrame API + SortableJS ohne „hidden state“
 
 ## 🚀 Installation & Setup
 
 ### Voraussetzungen
 - [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) oder höher
-- Ein beliebiger Code-Editor (empfohlen: [JetBrains Rider](https://www.jetbrains.com/rider/) oder [Visual Studio 2025](https://visualstudio.microsoft.com/))
-- Optional: [Git](https://git-scm.com/) für Versionskontrolle
 
-### Schritt-für-Schritt Anleitung
-
-1. **Repository klonen**
-   ```bash
-   git clone https://github.com/DEIN-USERNAME/DevToolbox.git
-   cd DevToolbox
-   ```
-
-2. **Dependencies installieren**
-   ```bash
-   dotnet restore
-   ```
-
-3. **Datenbank einrichten**
-
-   Die SQLite-Datenbank wird beim ersten Start automatisch erstellt. Für manuelle Migration:
-   ```bash
-   cd DevToolbox
-   dotnet ef database update
-   ```
-
-4. **Anwendung starten**
-   ```bash
-   dotnet run
-   ```
-
-5. **Im Browser öffnen**
-
-   Navigiere zu `https://localhost:5001` oder `http://localhost:5000`
-
-### Konfiguration
-
-Die Datenbank-Verbindungszeichenfolge kann in `appsettings.json` angepasst werden:
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Data Source=devtoolbox.db"
-  }
-}
-```
 ## 📁 Projektstruktur
 ```
 DevToolbox/
-├── Components/              # Wiederverwendbare Blazor-Komponenten
+├── Components/             # Wiederverwendbare Blazor-Komponenten
 │   ├── Layout/             # Layout-Komponenten (NavMenu, MainLayout)
 │   ├── Pages/              # Seiten (Home, Error, NotFound)
 │   └── App.razor           # Root-Komponente
 ├── Data/                   # Datenzugriffsschicht
 │   ├── ApplicationDbContext.cs    # EF Core DbContext
 │   └── EntityMapping/      # Fluent API Konfigurationen
-├── Features/               # Feature-Module
+└── Features/               # Feature-Module
 │   └── YouTubePlayer/      # YouTube Player Feature
 │       ├── Components/     # Feature-spezifische Komponenten
 │       ├── Models/         # Domain Models
-│       ├── Service/        # Business Logic
+│       ├── State/          # State slices + actions
+│       ├── Store/          # store + reducer + effects
 │       └── YouTubePlayer.razor
 ├── Migrations/             # EF Core Migrationen
 ├── wwwroot/                # Statische Assets (CSS, JS, Bilder)
@@ -135,54 +102,24 @@ DevToolbox/
 
 ## Design-Prinzipien
 - Feature-Slices: Jedes Feature ist in sich geschlossen
-- Separation of Concerns: UI, Business Logic und Datenzugriff sind getrennt
-- Dependency Injection: Lose Kopplung durch DI
-- Single Responsibility: Klassen haben eine klare, definierte Aufgabe
+- Separation of Concerns: UI, State, Side-Effects und Persistenz sind getrennt
+- Single Source of Truth: Feature-State wird zentral im Store verwaltet
+- Explizite State-Transitions: Änderungen passieren ausschließlich über Actions
+- Dependency Injection: Lose Kopplung über DI
 
 ## 🎯 Verwendung
 ### YouTube Playlist Manager
 
 1. Neue Playlist erstellen
-- Klicke auf "New Playlist" in der Playlist-Übersicht
-- Gib einen Namen ein und bestätige
+- Name und Beschreibung hier eingeben
 
 2. Videos hinzufügen
 - Wähle eine Playlist aus
-- Klicke auf "Add Video"
-- Füge eine YouTube-URL ein
-- Die Metadaten werden automatisch abgerufen
+- Hinzufügen eines Videos per YouTube-URL
 
 3. Videos abspielen & organisieren
-- Klicke auf ein Video, um es abzuspielen
-- Nutze die Player-Controls für Wiedergabe-Steuerung
+- Videos werden direkt im Player abgespielt
 - Ziehe Videos per Drag & Drop, um die Reihenfolge zu ändern
-
-## 🧪 Entwicklung
-### Neue Migrations erstellen
-
-```bash
-dotnet ef migrations add MigrationName --project DevToolbox
-```
-
-### Datenbank zurücksetzen
-
-```bash
-dotnet ef database update --project DevToolbox
-dotnet ef database update --project DevToolbox
-```
-### Hot Reload nutzen
-
-```bash
-dotnet watch run
-```
-
-## 🔧 Verwendete NuGet Packages
-
-```html
-<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.2" />
-<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.2" />
-<PackageReference Include="MudBlazor" Version="8.15.0" />
-```
 
 ## 🤝 Mitwirken
 
