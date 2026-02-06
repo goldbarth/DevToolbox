@@ -1,4 +1,4 @@
-namespace DevToolbox.Features.YouTubePlayer.Models;
+namespace DevToolbox.Features.YouTubePlayer.State;
 
 public abstract record PlayerState
 {
