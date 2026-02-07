@@ -1,6 +1,6 @@
-# 🧰 DevToolbox
+# 🏗️ ArcFlow
 
-> A Blazor Server portfolio project focused on **clean architecture**, **store-driven state management**, and **controlled JavaScript interop**.
+> Learning architecture by building it — a Blazor Server portfolio project with **store-driven state management** and **controlled JavaScript interop**.
 
 ![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=flat-square&logo=dotnet)
 ![Blazor](https://img.shields.io/badge/Blazor-Server-512BD4?style=flat-square&logo=blazor)
@@ -13,11 +13,11 @@
 
 I didn't want another todo-app portfolio. Instead, I asked myself: *How would I build a real-world feature with persistence, async workflows, and external API integration cleanly in Blazor?*
 
-DevToolbox is my answer — a project where I make deliberate architectural decisions, document them, and demonstrate them through concrete features. The focus is not on feature quantity, but on **depth and quality** of implementation.
+ArcFlow is my answer — a project where I make deliberate architectural decisions, document them, and demonstrate them through concrete features. The focus is not on feature quantity, but on **depth and quality** of implementation.
 
 ## 🔭 Scope of this Project
 
-DevToolbox is a **portfolio showcase**, not a production tool. The project grows organically — new features are only added when they are architecturally interesting and bring real complexity.
+ArcFlow is a **portfolio showcase**, not a production tool. The project grows organically — new features are only added when they are architecturally interesting and bring real complexity.
 
 ### 🎵 YouTube Playlist Manager (Architecture Demonstrator)
 
@@ -63,8 +63,8 @@ This project shows how I approach software development:
 
 ## 📚 Documentation
 
-- [Architecture](ARCHITECTURE_EN.md)
-- [Architecture Decision Records](ADR_EN.md)
+- [Architecture](ArcFlow/docs/en/ARCHITECTURE_EN.md)
+- [Architecture Decision Records](ArcFlow/docs/en/ADR_EN.md)
 
 ## 🗺️ Roadmap
 
@@ -99,7 +99,7 @@ This project shows how I approach software development:
 ## 📁 Project Structure
 
 ```
-DevToolbox/
+ArcFlow/
 ├── Components/             # Reusable Blazor components
 │   ├── Layout/             # NavMenu, MainLayout
 │   ├── Pages/              # Home, Error, NotFound
@@ -138,9 +138,9 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## 📧 Contact
 
-[![Portfolio](https://img.shields.io/badge/GitHub%20Pages-121013?logo=github&logoColor=white)](https://goldbarth.github.io/Portfolio/#/)
-[![LinkedIn](https://custom-icon-badges.demolab.com/badge/LinkedIn-0A66C2?logo=linkedin-white&logoColor=fff)](https://www.linkedin.com/in/felix-wahl-6763791b9/)
-[<kbd>E-Mail</kbd>](mailto:felix.wahl@live.de)
+- [![Portfolio](https://img.shields.io/badge/GitHub%20Pages-121013?logo=github&logoColor=white)](https://goldbarth.github.io/Portfolio/#/)
+- [![LinkedIn](https://custom-icon-badges.demolab.com/badge/LinkedIn-0A66C2?logo=linkedin-white&logoColor=fff)](https://www.linkedin.com/in/felix-wahl-6763791b9/)
+- [<kbd>E-Mail</kbd>](mailto:felix.wahl@live.de)
 
 ---
 

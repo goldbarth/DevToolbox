@@ -1,9 +1,10 @@
-# 🧰 DevToolbox
+# 🏗️ ArcFlow
 
-A Blazor Web App (Server) portfolio project focused on **explicit state management**,  
-**store-driven architecture**, and **controlled JavaScript interop**.
+>Arcflow — Learning architecture by building it.
+**Store-driven** Blazor Web App architecture showcase with **controlled JS interop**.
 
+The focus is on explicit state transitions, clear accountability, and comprehensible architectural decisions.
 ## Documentation
 
 - 🇩🇪 [Deutsch](DevToolbox/docs/de/README_DE.md)
-- 🇬🇧 [English](DevToolbox/docs/en/README_EN.md)
+- 🇬🇧 [English](ArcFlow/docs/en/README_EN.md)

@@ -1,6 +1,6 @@
-# 🧰 DevToolbox
+# 🏗️ ArcFlow
 
-> Blazor-Server Portfolio-Projekt mit Fokus auf **saubere Architektur**, **store-getriebenes State-Management** und **kontrollierte JavaScript-Interop**.
+> Architektur lernen, indem man sie baut — ein Blazor-Server Portfolio-Projekt mit **store-getriebenem State-Management** und **kontrollierter JavaScript-Interop**.
 
 ![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?style=flat-square&logo=dotnet)
 ![Blazor](https://img.shields.io/badge/Blazor-Server-512BD4?style=flat-square&logo=blazor)
@@ -13,11 +13,11 @@
 
 Ich wollte kein weiteres Todo-App-Portfolio. Stattdessen habe ich mir die Frage gestellt: *Wie würde ich ein reales Feature mit Persistenz, asynchronen Workflows und externer API-Anbindung in Blazor sauber umsetzen?*
 
-DevToolbox ist meine Antwort darauf — ein Projekt, in dem ich bewusst architektonische Entscheidungen treffe, dokumentiere und an konkreten Features demonstriere. Der Fokus liegt nicht auf Feature-Menge, sondern auf **Tiefe und Qualität** der Umsetzung.
+ArcFlow ist meine Antwort darauf — ein Projekt, in dem ich bewusst architektonische Entscheidungen treffe, dokumentiere und an konkreten Features demonstriere. Der Fokus liegt nicht auf Feature-Menge, sondern auf **Tiefe und Qualität** der Umsetzung.
 
 ## 🔭 Scope of this Project
 
-DevToolbox ist ein **Portfolio-Showcase**, kein Produktivtool. Das Projekt wächst organisch — neue Features entstehen nur, wenn sie architektonisch interessant sind und echte Komplexität mitbringen.
+ArcFlow ist ein **Portfolio-Showcase**, kein Produktivtool. Das Projekt wächst organisch — neue Features entstehen nur, wenn sie architektonisch interessant sind und echte Komplexität mitbringen.
 
 ### 🎵 YouTube Playlist Manager (Architektur-Demonstrator)
 
@@ -99,7 +99,7 @@ Dieses Projekt zeigt, wie ich an Software-Entwicklung herangehe:
 ## 📁 Projektstruktur
 
 ```
-DevToolbox/
+ArcFlow/
 ├── Components/             # Wiederverwendbare Blazor-Komponenten
 │   ├── Layout/             # NavMenu, MainLayout
 │   ├── Pages/              # Home, Error, NotFound
