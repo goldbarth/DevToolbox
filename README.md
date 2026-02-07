@@ -6,5 +6,5 @@
 The focus is on explicit state transitions, clear accountability, and comprehensible architectural decisions.
 ## Documentation
 
-- 🇩🇪 [Deutsch](DevToolbox/docs/de/README_DE.md)
+- 🇩🇪 [Deutsch](ArcFlow/docs/de/README_DE.md)
 - 🇬🇧 [English](ArcFlow/docs/en/README_EN.md)
