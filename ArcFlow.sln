@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevToolbox", "DevToolbox\DevToolbox.csproj", "{E3E479B2-F8D7-4FDE-8D48-0E6273C06959}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArcFlow", "ArcFlow\ArcFlow.csproj", "{E3E479B2-F8D7-4FDE-8D48-0E6273C06959}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
