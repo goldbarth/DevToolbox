@@ -21,7 +21,7 @@ jobs:
 
       - name: Update README with recent features
         run: |
-          COMMITS=$(git log --oneline --grep="^feat" --pretty=format:'| %s | %ad | [%h](https://github.com/goldbarth/DevToolbox/commit/%H) |' --date=format:'%Y-%m-%d %H:%M:%S CET' -n 5)
+          COMMITS=$(git log --oneline --grep="^feat" --pretty=format:'| %s | %ad | [%h](https://github.com/goldbarth/ArcFlow/commit/%H) |' --date=format:'%Y-%m-%d %H:%M:%S CET' -n 5)
           
           if [ -z "$COMMITS" ]; then
             echo "No feat commits found"
