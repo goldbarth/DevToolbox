@@ -79,6 +79,13 @@ This project shows how I approach software development:
 - Polish UI — responsiveness, edge cases, micro-interactions
 
 **Completed**
+- ~~Playlist & video management~~ — CRUD operations, selection, queue control
+- ~~Persistence~~ — SQLite with EF Core, domain models with Fluent API mappings
+- ~~YouTube Player integration~~ — IFrame API via controlled JS interop, PlayerState tracking
+- ~~Drag & drop~~ — SortableJS with deliberate lifecycle handling outside of Blazor diffing
+- ~~UI foundation~~ — MudBlazor integration, layout with sidebar, drawers as dispatch-only components
+- ~~Store architecture~~ — Unidirectional data flow with actions, reducer and effects, channel-based action queue
+- ~~Immutability & lifecycle~~ — Immutable records, ImmutableList collections, clean dispose pattern
 - ~~Error handling strategy~~ — Result pattern, categorized errors, toast notifications, structured logging
 
 **On the Radar**

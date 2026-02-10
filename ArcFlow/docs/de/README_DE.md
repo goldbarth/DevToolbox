@@ -79,6 +79,13 @@ Dieses Projekt zeigt, wie ich an Software-Entwicklung herangehe:
 - UI polieren — Responsiveness, Edge Cases, Micro-Interactions
 
 **Abgeschlossen**
+- ~~Playlist- & Video-Verwaltung~~ — CRUD-Operationen, Auswahl, Queue-Steuerung
+- ~~Persistenz~~ — SQLite mit EF Core, Domain-Modelle mit Fluent API Mappings
+- ~~YouTube Player Integration~~ — IFrame API via kontrollierter JS-Interop, PlayerState-Tracking
+- ~~Drag & Drop~~ — SortableJS mit bewusstem Lifecycle-Handling außerhalb von Blazor-Diffing
+- ~~UI-Grundgerüst~~ — MudBlazor-Integration, Layout mit Sidebar, Drawers als Dispatch-only-Komponenten
+- ~~Store-Architektur~~ — Unidirektionaler Datenfluss mit Actions, Reducer und Effects, Channel-basierte Action-Queue
+- ~~Immutability & Lifecycle~~ — Immutable Records, ImmutableList-Collections, sauberes Dispose-Pattern
 - ~~Fehlerbehandlungsstrategie~~ — Result Pattern, kategorisierte Fehler, Toast-Notifications, strukturiertes Logging
 
 **Auf dem Radar**
