@@ -42,8 +42,12 @@ Typical layout:
     - sub-states (e.g. `PlaylistsState`, `QueueState`, `PlayerState`)
     - `YtAction.cs` (actions)
     - `ActionOrigin.cs` (enum: `User`, `System`, `TimeTravel`)
-    - `QueueSnapshot.cs` (immutable snapshot with parallel `VideoPositions` array)
-    - `UndoPolicy.cs` (determines which actions are undoable/boundary)
+    - `QueueSnapshot.cs` (immutable snapshot with parallel `VideoPositions` array + playback fields)
+    - `UndoPolicy.cs` (determines which actions are undoable/boundary/playback-transient)
+    - `RepeatMode.cs` (enum: `Off`, `All`, `One`)
+    - `PlaybackDecision.cs` (discriminated union: `AdvanceTo`, `Stop`, `NoOp`)
+    - `PlaybackReasons.cs` (`AdvanceReason`, `StopReason` enums)
+    - `PlaybackNavigation.cs` (pure strategy functions for shuffle/next/prev/repair)
     - `Notification.cs` (notification model + severity)
     - `OperationError.cs` (categorized errors + OperationContext)
     - `Result.cs` (Result pattern for expected failures)
@@ -76,9 +80,17 @@ The UI derives all view decisions from these values.
 - `SelectedPlaylistId`: `Guid?`
 - `Videos`: `ImmutableList<VideoItem>` (sorted by `Position`)
 - `CurrentIndex`: `int?` (current selection)
+- `CurrentItemId`: `Guid?` — ID-based tracking (stable across sort operations)
 - `Past`: `ImmutableList<QueueSnapshot>` — undo history (max 30 entries)
 - `Future`: `ImmutableList<QueueSnapshot>` — redo history
 - `CanUndo` / `CanRedo`: derived properties for UI binding
+
+**Playback navigation:**
+- `RepeatMode`: `Off` | `All` | `One`
+- `ShuffleEnabled`: `bool`
+- `ShuffleOrder`: `ImmutableList<Guid>` — permutation of video IDs (current at front)
+- `PlaybackHistory`: `ImmutableList<Guid>` — stack semantics for Previous in shuffle mode (max 100)
+- `ShuffleSeed`: `int` — deterministic seed for Fisher-Yates shuffle
 
 ### Player
 Represents the playback lifecycle and is updated only via actions dispatched from JS interop
@@ -98,6 +110,10 @@ Triggered by the UI:
 - `CreatePlaylist(...)`
 - `AddVideo(...)`
 - `SortChanged(oldIndex, newIndex)`
+- `ShuffleSet(enabled, seed?)` — toggle shuffle on/off
+- `RepeatSet(mode)` — cycle repeat mode (Off → All → One)
+- `NextRequested` — advance to next video
+- `PrevRequested` — go to previous video
 - `UndoRequested` — revert last queue change
 - `RedoRequested` — restore undone change
 
@@ -105,6 +121,8 @@ Triggered by the UI:
 Triggered by effects:
 - `PlaylistsLoaded(playlists)`
 - `PlaylistLoaded(playlist)`
+- `PlaybackAdvanced(toItemId, reason)` — effect routing
+- `PlaybackStopped(reason)` — effect routing
 
 ### Error Handling & Notifications
 - `OperationFailed(OperationError)` — categorized error with context
@@ -145,6 +163,8 @@ No DB calls, no JS calls, no timing dependencies.
    - Capture pre-snapshot of current QueueState
    - Execute `ReduceStandard` (contains exhaustive pattern matching)
    - Apply `ApplyHistoryPolicy` (update or reset undo history)
+   - If `Videos` reference changed → call `RepairPlaybackStructures` (fix shuffle order, history, sync index)
+   - Apply `Validate()` (bounds-check CurrentIndex, clear stale CurrentItemId)
 
 **Exhaustive Pattern Matching (in `ReduceStandard`):**
 
@@ -252,6 +272,31 @@ Therefore:
 4. Effects are skipped (effect gating)
 5. UI updates: previous video index / sort order is restored
 
+### Next / Previous (Playback Navigation)
+1. UI dispatches `NextRequested` (or `PrevRequested`)
+2. Reducer calls `PlaybackNavigation.ComputeNext` (or `ComputePrev`) — pure function
+3. Decision: `AdvanceTo(itemId)` → set `CurrentIndex`/`CurrentItemId`, `Player = Loading`
+4. Decision: `Stop` → `Player = Paused` (end of queue, RepeatMode.Off)
+5. Decision: `NoOp` → no change (e.g. Prev at start of sequential queue)
+6. Effect calls JS `loadVideo` (reuses `LoadCurrentVideoFromState`)
+7. Undo history is preserved (playback-transient actions don't modify Past/Future)
+
+### Shuffle Toggle
+1. UI dispatches `ShuffleSet(true, seed?)` (or `false`)
+2. Enabling: reducer calls `GenerateShuffleOrder` (Fisher-Yates, current item at index 0), clears PlaybackHistory
+3. Disabling: clears ShuffleOrder + PlaybackHistory
+4. `CurrentItemId` and `CurrentIndex` remain unchanged
+
+### Repeat Cycle
+1. UI dispatches `RepeatSet(mode)` — cycles Off → All → One
+2. Reducer updates `RepeatMode`
+3. RepeatOne: `ComputeNext` returns `AdvanceTo(current)`, JS restarts via `seekTo(0)`
+
+### Video Ended (Auto-Advance)
+1. JS fires `OnVideoEnded` → UI dispatches `VideoEnded`
+2. Effect dispatches `NextRequested` (replacing old index-based `SelectNextVideoWithAutoplay`)
+3. Full shuffle/repeat logic applies automatically
+
 ### Create Playlist
 1. Drawer emits `EventCallback<CreatePlaylistRequest>`
 2. Page dispatches `CreatePlaylist`
@@ -259,6 +304,34 @@ Therefore:
 4. Effect writes to DB
 5. Effect dispatches `PlaylistsLoaded` (reloads)
 6. Effect dispatches `SelectPlaylist` (selects new playlist)
+
+---
+
+## Playback Navigation
+
+### Strategy Functions (`PlaybackNavigation`)
+All navigation decisions are computed by pure static functions — no I/O, fully unit-testable:
+
+| Function | Purpose |
+|----------|---------|
+| `ComputeNext(queue)` | Next video based on RepeatMode + ShuffleEnabled. Pushes current to PlaybackHistory. |
+| `ComputePrev(queue)` | Previous video. Shuffle: pops from PlaybackHistory. Sequential: index - 1. |
+| `GenerateShuffleOrder(videos, currentItemId, seed)` | Fisher-Yates permutation. Current item moved to index 0. Deterministic (same seed = same result). |
+| `RepairPlaybackStructures(queue)` | Called after queue mutations. Filters invalid IDs from ShuffleOrder/PlaybackHistory, appends new videos, syncs CurrentIndex from CurrentItemId. |
+
+### PlaybackDecision (Return Type)
+Discriminated union:
+- `AdvanceTo(Guid ItemId)` — navigate to specific video
+- `Stop` — end of queue (RepeatMode.Off)
+- `NoOp` — no action (e.g. Prev at start)
+
+### Queue Mutation Resilience
+When videos are added/removed (e.g. `PlaylistLoaded`, `AddVideo`), `RepairPlaybackStructures` ensures:
+- ShuffleOrder only contains valid video IDs (removed IDs filtered out)
+- New videos are appended to existing ShuffleOrder (if non-empty)
+- PlaybackHistory only contains valid IDs
+- CurrentItemId is cleared if its video was removed
+- CurrentIndex is synced from CurrentItemId
 
 ---
 
@@ -324,6 +397,7 @@ Undo/Redo operates exclusively on `QueueState` (not Player, not Playlists) via a
 - `Videos` — reference to the current `ImmutableList<VideoItem>`
 - `VideoPositions` — parallel array with `Position` values at snapshot time
 - `SelectedPlaylistId`, `CurrentIndex`
+- `RepeatMode`, `ShuffleEnabled`, `CurrentItemId`, `ShuffleOrder`, `PlaybackHistory`, `ShuffleSeed`
 
 **Why `VideoPositions`?** `HandleSortChanged` mutates `VideoItem.Position` in-place on shared references. Without separate position capture, past snapshots would be silently corrupted by later sorts.
 
@@ -334,6 +408,7 @@ Determines how history reacts to actions:
 |------|---------|----------|
 | **Undoable** | `SelectVideo`, `SortChanged` | Snapshot pushed to `Past`, `Future` cleared |
 | **Boundary** | `PlaylistLoaded`, `SelectPlaylist` | `Past` and `Future` cleared entirely |
+| **Playback Transient** | `NextRequested`, `PrevRequested`, `ShuffleSet`, `RepeatSet`, `PlaybackAdvanced`, `PlaybackStopped` | History preserved as-is (no entry, no clearing) |
 | **Other** | All others | History unchanged |
 
 ### Limits
@@ -352,10 +427,13 @@ xUnit-based test project with access to `internal` members via `InternalsVisible
 
 | Test File | Focus |
 |-----------|-------|
-| `UndoPolicyTests` | `IsUndoable()` and `IsBoundary()` for all action types |
-| `QueueSnapshotTests` | Round-trip, position restoration after mutation |
-| `UndoRedoReducerTests` | Core undo/redo logic, history limit, boundary clearing, multi-step |
+| `UndoPolicyTests` | `IsUndoable()`, `IsBoundary()`, `IsPlaybackTransient()` for all action types |
+| `QueueSnapshotTests` | Round-trip, position restoration after mutation, playback field preservation |
+| `UndoRedoReducerTests` | Core undo/redo logic, history limit, boundary clearing, multi-step, NextRequested passthrough |
 | `EffectGatingTests` | No side-effects on undo/redo actions |
+| `PlaybackNavigationTests` | Pure strategy functions: shuffle generation, next/prev for all mode combinations, repair, edge cases |
+| `ShuffleRepeatReducerTests` | Full reducer pipeline: ShuffleSet, RepeatSet, NextRequested, PrevRequested, undo preservation |
+| `PlaybackIntegrationTests` | End-to-end: sequential/repeat/shuffle sequences, round-trips, queue mutations, deterministic permutation |
 
 - **Reducer**: unit-testable (state + action → new state)
 - **Effects**: testable via mocked services and asserted follow-up actions

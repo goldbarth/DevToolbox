@@ -30,6 +30,7 @@ The main feature deliberately combines several challenges in one:
 - **Explicit State Management** — Store-driven data flow through Actions, Reducers, and Effects
 - **Error Handling & Notifications** — Result pattern with categorized errors, MudBlazor Snackbar notifications, and structured logging
 - **Undo/Redo** — Snapshot-based time travel for queue actions with Past/Future stacks
+- **Shuffle & Repeat** — Permutation-based shuffle with playback history stack, three repeat modes (Off/All/One), pure strategy functions for navigation
 
 > More tools will follow when they bring something architecturally new to the table.
 
@@ -73,12 +74,13 @@ This project shows how I approach software development:
 > No deadlines, no promises — just the direction this project is heading.
 
 **Current Focus**
-- Shuffle/repeat modes — extend existing queue logic with playback strategies
-
-**Next**
 - Polish UI — responsiveness, edge cases, micro-interactions
 
+**Next**
+- Playback persistence — restore player state (position, active track) across sessions
+
 **Completed**
+- ~~Shuffle & Repeat~~ — Permutation-based shuffle (Fisher-Yates, deterministic seed), three repeat modes (Off/All/One), playback history stack for Previous in shuffle mode, pure strategy functions (`PlaybackNavigation`), `RepairPlaybackStructures` for queue mutation resilience, undo-history passthrough via `IsPlaybackTransient`
 - ~~MudBlazor layout migration~~ — Full migration to MudLayout (MudAppBar, MudDrawer Mini variant, MudNavMenu), replaced NotificationPanel with MudBlazor ISnackbar
 - ~~Undo/Redo~~ — Snapshot-based time travel for queue actions (SelectVideo, SortChanged) with Past/Future stacks, UndoPolicy, and effect gating
 - ~~Persistence~~ — SQLite with EF Core, domain models with Fluent API mappings
@@ -91,7 +93,6 @@ This project shows how I approach software development:
 - ~~Error handling strategy~~ — Result pattern, categorized errors, toast notifications, structured logging
 
 **On the Radar**
-- Playback persistence — restore player state (position, active track) across sessions
 - Cross-feature communication — event bus or shared state between future feature modules
 
 ## 🛠️ Tech Stack
@@ -130,11 +131,14 @@ ArcFlow/
 ├── Program.cs              # Entry point
 └── appsettings.json        # Configuration
 
-ArcFlow.Tests/              # xUnit test project
-├── UndoPolicyTests.cs      # Undo policy function tests
-├── QueueSnapshotTests.cs   # Snapshot round-trip & position restoration tests
-├── UndoRedoReducerTests.cs # Core reducer undo/redo tests
-└── EffectGatingTests.cs    # Effect gating tests for time-travel actions
+ArcFlow.Tests/                    # xUnit test project
+├── UndoPolicyTests.cs            # Undo policy function tests
+├── QueueSnapshotTests.cs         # Snapshot round-trip & position restoration tests
+├── UndoRedoReducerTests.cs       # Core reducer undo/redo tests
+├── EffectGatingTests.cs          # Effect gating tests for time-travel actions
+├── PlaybackNavigationTests.cs    # Pure strategy function tests (shuffle, next/prev, repair)
+├── ShuffleRepeatReducerTests.cs  # Reducer pipeline tests for shuffle/repeat/navigation
+└── PlaybackIntegrationTests.cs   # End-to-end playback scenario tests
 ```
 
 ## 🔄 Recently Worked On

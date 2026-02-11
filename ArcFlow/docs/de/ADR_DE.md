@@ -190,3 +190,27 @@ Das ursprüngliche Layout basierte auf manueller HTML-Struktur mit eigenem CSS f
 - Page-Level-Drawers: `DrawerVariant.Temporary` mit korrektem Overlay und Slide-Animation
 - `div.app-root`-Wrapper ermöglicht `::deep`-Zugriff auf MudBlazor-interne Klassen
 - Weniger eigener CSS-Code, da MudBlazor Layouting und Responsive-Verhalten übernimmt
+
+---
+
+## ADR-013: Permutationsbasierter Shuffle mit reinen Strategie-Funktionen
+
+**Entscheidung**
+Shuffle, Repeat und Playback-Navigation werden als reine statische Funktionen in `PlaybackNavigation` implementiert, die `PlaybackDecision` (Discriminated Union: `AdvanceTo` / `Stop` / `NoOp`) zusammen mit einem aktualisierten `QueueState` zurückgeben. Shuffle verwendet Fisher-Yates-Permutation mit deterministischem Seed. Previous im Shuffle-Modus nutzt einen `PlaybackHistory`-Stack (LIFO).
+
+**Begründung**
+Playback-Navigation umfasst mehrere interagierende Dimensionen (Shuffle ein/aus, drei Repeat-Modi, Queue-Mutationen). Die Implementierung dieser Logik direkt im Reducer würde isoliertes Testen erschweren. Durch die Extraktion von `ComputeNext`, `ComputePrev`, `GenerateShuffleOrder` und `RepairPlaybackStructures` als reine statische Funktionen kann jede einzeln mit deterministischen Eingaben getestet werden. Der Rückgabetyp `PlaybackDecision` macht die Verzweigung im Reducer explizit (kein Seitenkanal-State).
+
+Zentrale Design-Entscheidungen:
+- **Permutation, nicht zufällige Auswahl**: `GenerateShuffleOrder` erzeugt vorab eine vollständige Permutation (jedes Video wird genau einmal gespielt, bevor es wiederholt wird), anstatt bei jedem Schritt zufällig zu wählen. Dies verhindert Duplikate und ermöglicht Previous, den exakten Pfad zurückzuverfolgen.
+- **PlaybackHistory-Stack**: Im Shuffle-Modus pusht jedes `ComputeNext` das aktuelle Video auf `PlaybackHistory`. `ComputePrev` poppt davon. Dies gibt dem Nutzer exakte history-basierte Navigation statt "vorheriges in Shuffle-Reihenfolge" (was verwirrend wäre).
+- **Deterministischer Seed**: Gleicher Seed erzeugt gleiche Permutation, was reproduzierbare Testszenarien und potenzielle spätere Persistenz ermöglicht.
+- **RepairPlaybackStructures**: Wird nach jeder Queue-Mutation (Video hinzufügen/entfernen) aufgerufen, filtert veraltete IDs und hängt neue Videos an — macht das System resilient gegen gleichzeitige Änderungen.
+- **Playback-transiente UndoPolicy**: `IsPlaybackTransient` stellt sicher, dass Navigations-Actions (`NextRequested`, `PrevRequested`, `ShuffleSet`, `RepeatSet`) das Undo-System durchlaufen, ohne History-Einträge zu erzeugen oder Future zu leeren — sie sind orthogonal zu Undo/Redo.
+
+**Konsequenzen**
+- 95 Tests insgesamt (53 neue) mit vollständiger Abdeckung aller Modus-Kombinationen und Grenzfälle
+- `QueueSnapshot` erfasst alle 6 neuen Felder, sodass Undo/Redo den Shuffle/Repeat-State erhält
+- Reducer-Handler sind schlank: delegieren an reine Funktionen, wenden dann die Entscheidung an
+- Neue Playback-Modi (z. B. Shuffle-Algorithmen, gewichtetes Repeat) können durch Erweiterung von `PlaybackNavigation` hinzugefügt werden, ohne den Reducer anzufassen
+- `VideoEnded`-Effect dispatcht jetzt `NextRequested` statt direkter Index-Berechnung, wodurch die gesamte Auto-Advance-Logik über denselben Pfad vereinheitlicht wird

@@ -30,6 +30,7 @@ Das Haupt-Feature kombiniert bewusst mehrere Herausforderungen in einem Feature:
 - **Explizites State-Management** — Store-getriebener Datenfluss über Actions, Reducer und Effects
 - **Fehlerbehandlung & Notifications** — Result Pattern mit kategorisierten Fehlern, MudBlazor-Snackbar-Benachrichtigungen und strukturiertem Logging
 - **Undo/Redo** — Snapshot-basierte Zeitreise für Queue-Aktionen mit Past/Future-Stacks
+- **Shuffle & Repeat** — Permutationsbasierter Shuffle mit Playback-History-Stack, drei Repeat-Modi (Off/All/One), reine Strategie-Funktionen für die Navigation
 
 > Weitere Tools folgen, wenn sie architektonisch etwas Neues einbringen.
 
@@ -73,12 +74,13 @@ Dieses Projekt zeigt, wie ich an Software-Entwicklung herangehe:
 > Kein Zeitplan, keine Versprechen — nur die Richtung, in die das Projekt wächst.
 
 **Aktueller Fokus**
-- Shuffle/Repeat-Modi — Erweiterung der bestehenden Queue-Logik um Playback-Strategien
-
-**Als Nächstes**
 - UI polieren — Responsiveness, Edge Cases, Micro-Interactions
 
+**Als Nächstes**
+- Playback-Persistenz — Player-State (Position, aktiver Track) über Sessions hinweg wiederherstellen
+
 **Abgeschlossen**
+- ~~Shuffle & Repeat~~ — Permutationsbasierter Shuffle (Fisher-Yates, deterministischer Seed), drei Repeat-Modi (Off/All/One), Playback-History-Stack für Previous im Shuffle-Modus, reine Strategie-Funktionen (`PlaybackNavigation`), `RepairPlaybackStructures` für Queue-Mutations-Resilienz, Undo-History-Passthrough via `IsPlaybackTransient`
 - ~~MudBlazor-Layout-Migration~~ — Vollständige Migration zu MudLayout (MudAppBar, MudDrawer Mini-Variant, MudNavMenu), Ersetzung der NotificationPanel-Komponente durch MudBlazor ISnackbar
 - ~~Undo/Redo~~ — Snapshot-basierte Zeitreise für Queue-Aktionen (SelectVideo, SortChanged) mit Past/Future-Stacks, UndoPolicy und Effect-Gating
 - ~~Persistenz~~ — SQLite mit EF Core, Domain-Modelle mit Fluent API Mappings
@@ -91,7 +93,6 @@ Dieses Projekt zeigt, wie ich an Software-Entwicklung herangehe:
 - ~~Fehlerbehandlungsstrategie~~ — Result Pattern, kategorisierte Fehler, Toast-Notifications, strukturiertes Logging
 
 **Auf dem Radar**
-- Playback-Persistenz — Player-State (Position, aktiver Track) über Sessions hinweg wiederherstellen
 - Cross-Feature-Kommunikation — Event-Bus oder Shared State zwischen zukünftigen Feature-Modulen
 
 ## 🛠️ Tech Stack
@@ -130,11 +131,14 @@ ArcFlow/
 ├── Program.cs              # Einstiegspunkt
 └── appsettings.json        # Konfiguration
 
-ArcFlow.Tests/              # xUnit-Testprojekt
-├── UndoPolicyTests.cs      # Tests für Undo-Policy-Funktionen
-├── QueueSnapshotTests.cs   # Tests für Snapshot-Roundtrip & Positionswiederherstellung
-├── UndoRedoReducerTests.cs # Reducer-Tests für Undo/Redo
-└── EffectGatingTests.cs    # Tests für Effect-Gating bei Zeitreise-Actions
+ArcFlow.Tests/                    # xUnit-Testprojekt
+├── UndoPolicyTests.cs            # Tests für Undo-Policy-Funktionen
+├── QueueSnapshotTests.cs         # Tests für Snapshot-Roundtrip & Positionswiederherstellung
+├── UndoRedoReducerTests.cs       # Reducer-Tests für Undo/Redo
+├── EffectGatingTests.cs          # Tests für Effect-Gating bei Zeitreise-Actions
+├── PlaybackNavigationTests.cs    # Tests für reine Strategie-Funktionen (Shuffle, Next/Prev, Repair)
+├── ShuffleRepeatReducerTests.cs  # Reducer-Pipeline-Tests für Shuffle/Repeat/Navigation
+└── PlaybackIntegrationTests.cs   # End-to-End Playback-Szenario-Tests
 ```
 
 ## 🔄 Recently Worked On
